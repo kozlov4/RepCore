@@ -1,0 +1,27 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Serge Kozlov",email = "serge.kozlov.dev@gmail.com"}
+]
+requires-python = ">=3.14,<4.0"
+dependencies = [
+    "fastapi (>=0.143.0,<0.144.0)",
+    "alembic (>=1.20.0,<2.0.0)",
+    "pydantic[email] (>=2.14.1,<3.0.0)",
+    "uvicorn (>=0.54.0,<0.55.0)",
+    "sqlalchemy[asyncio] (>=2.1.4,<3.0.0)",
+    "asyncpg (>=0.32.0,<0.33.0)",
+    "pydantic-settings (>=2.15.0,<3.0.0)",
+    "bcrypt (>=5.0.0,<6.0.0)",
+    "pyjwt (>=2.15.1,<3.0.0)",
+    "python-multipart (>=0.0.32,<0.0.33)",
+    "fastapi-mail (>=1.6.8,<2.0.0)",
+    "slowapi (>=0.1.10,<0.2.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
