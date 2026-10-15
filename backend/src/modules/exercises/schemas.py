@@ -17,3 +17,9 @@ class ExerciseResponse(BaseModel):
     class Config:
 
         from_attributes = True
+
+
+class ExerciseUpdate(BaseModel):
+    name: str | None = None
+    muscle_group: MuscleGroup | None = None
+    is_bodyweight: bool | None = None

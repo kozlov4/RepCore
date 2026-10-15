@@ -7,7 +7,7 @@ from src.core.db_helper import db_helper
 from src.modules.users.dependencies import get_current_user
 
 from .models import Exercise, MuscleGroup
-from .schemas import ExerciseCreate, ExerciseResponse
+from .schemas import ExerciseCreate, ExerciseResponse, ExerciseUpdate
 from . import services
 
 router = APIRouter(tags=["Exercises"])
@@ -47,4 +47,34 @@ async def create_exercise(
 ):
     return await services.create_custom_exercise(
         session=session, exercise_in=exercise_in, user_id=user_id
+    )
+
+
+@router.patch(
+    "/exercises/{exercise_id}",
+    response_model=ExerciseResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def update_exercise(
+    exercise_id: int,
+    exercise_in: ExerciseUpdate,
+    session: SessionDep,
+    user_id: int = Depends(get_current_user),
+):
+    return await services.update_custom_exercise(
+        session=session,
+        exercise_id=exercise_id,
+        exercise_in=exercise_in,
+        user_id=user_id,
+    )
+
+
+@router.delete("/exercises/{exercise_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_exercise(
+    exercise_id: int,
+    session: SessionDep,
+    user_id: int = Depends(get_current_user),
+):
+    await services.delete_custom_exercise(
+        session=session, exercise_id=exercise_id, user_id=user_id
     )

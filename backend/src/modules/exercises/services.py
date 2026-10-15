@@ -1,7 +1,10 @@
+from fastapi import HTTPException
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
+
 from .models import Exercise, MuscleGroup
-from .schemas import ExerciseCreate
+from .schemas import ExerciseCreate, ExerciseUpdate
 
 
 async def get_filtered_exercises(
@@ -49,3 +52,44 @@ async def create_custom_exercise(
     await session.commit()
     await session.refresh(new_exercise)
     return new_exercise
+
+
+async def update_custom_exercise(
+    session: AsyncSession, exercise_id: int, exercise_in: ExerciseUpdate, user_id: int
+):
+    query = select(Exercise).where(
+        Exercise.id == exercise_id, Exercise.user_id == user_id
+    )
+    result = await session.execute(query)
+    exercise = result.scalars().first()
+
+    if not exercise:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Упражнение не найдено или у вас нет прав на его изменение",
+        )
+
+    update_data = exercise_in.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(exercise, key, value)
+
+    await session.commit()
+    await session.refresh(exercise)
+    return exercise
+
+
+async def delete_custom_exercise(session: AsyncSession, exercise_id: int, user_id: int):
+    query = select(Exercise).where(
+        Exercise.id == exercise_id, Exercise.user_id == user_id
+    )
+    result = await session.execute(query)
+    exercise = result.scalars().first()
+
+    if not exercise:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Упражнение не найдено или у вас нет прав на его удаление",
+        )
+
+    await session.delete(exercise)
+    await session.commit()
