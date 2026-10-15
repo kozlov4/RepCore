@@ -4,11 +4,9 @@ from fastapi.security import OAuth2PasswordBearer
 
 from modules.users.utils import decode_jwt
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/users/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
-oauth2_scheme_optional = OAuth2PasswordBearer(
-    tokenUrl="api/v1/users/login", auto_error=False
-)
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="api/v1/login", auto_error=False)
 
 
 async def get_current_user(
