@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.db_helper import db_helper
 from src.modules.users.dependencies import get_current_user
@@ -16,15 +16,29 @@ SessionDep = Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 @router.get(
     "/exercises", response_model=list[ExerciseResponse], status_code=status.HTTP_200_OK
 )
+@router.get(
+    "/exercises", response_model=list[ExerciseResponse], status_code=status.HTTP_200_OK
+)
 async def get_exercises(
     session: SessionDep,
     muscle_group: MuscleGroup | None = Query(None, description="Фильтр по группе мышц"),
     is_bodyweight: bool | None = Query(
         None, description="Только со своим весом (true) или только с железом (false)"
     ),
+    is_own_exercise: bool | None = Query(None, description="Собственные упражнения"),
     search: str | None = Query(None, description="Поиск по части названия"),
+    user_id: int = Depends(get_current_user),
 ):
-    query = select(Exercise).where(Exercise.user_id.is_(None))
+    query = select(Exercise)
+
+    if is_own_exercise is True:
+        query = query.where(Exercise.user_id == user_id)
+    elif is_own_exercise is False:
+        query = query.where(Exercise.user_id.is_(None))
+    else:
+        query = query.where(
+            or_(Exercise.user_id.is_(None), Exercise.user_id == user_id)
+        )
 
     if muscle_group is not None:
         query = query.where(Exercise.muscle_group == muscle_group)
