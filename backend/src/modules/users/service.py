@@ -156,9 +156,6 @@ async def register_user(
 
     new_user = User(
         email=user_in.email,
-        name=user_in.name,
-        surname=user_in.surname,
-        phone=user_in.phone,
         hash_password=safe_hash,
         is_active=False,
     )

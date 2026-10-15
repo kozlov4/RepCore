@@ -6,6 +6,11 @@ from src.core.base import Base
 
 from src.modules.exercises.models import Exercise
 
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from src.modules.users.models import User
 
 class Workout(Base):
     __tablename__ = "workouts"
@@ -20,6 +25,9 @@ class Workout(Base):
         Date, default=datetime.date.today, index=True
     )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # ОБЯЗАТЕЛЬНО: обратная связь к User
+    user: Mapped[User] = relationship(back_populates="workouts")
 
     sets: Mapped[list[WorkoutSet]] = relationship(
         back_populates="workout", cascade="all, delete-orphan"
