@@ -13,6 +13,23 @@ router = APIRouter(tags=["Workouts"])
 SessionDep = Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 
 
+@router.get(
+    "/workouts/{workout_id}",
+    response_model=WorkoutResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_workout(
+    session: SessionDep,
+    workout_id: int,
+    user_id: int = Depends(get_current_user),
+):
+    return await service.get_workout(
+        session=session,
+        user_id=user_id,
+        workout_id=workout_id,
+    )
+
+
 @router.post(
     "/workouts", response_model=WorkoutResponse, status_code=status.HTTP_201_CREATED
 )

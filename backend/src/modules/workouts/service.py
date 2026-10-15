@@ -22,3 +22,7 @@ async def create_workout(
     await session.commit()
     await session.refresh(new_workout)
     return new_workout
+
+
+async def get_workout(session: AsyncSession, user_id: int, workout_id: int):
+    pass
