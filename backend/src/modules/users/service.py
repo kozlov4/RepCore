@@ -265,7 +265,6 @@ async def user_login(
         payload={
             "sub": str(user.user_id),
             "type": "access",
-            "is_admin": user.is_admin,
             "jti": str(uuid.uuid4()),
         },
         expire_minutes=15,
