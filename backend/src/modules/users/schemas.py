@@ -33,9 +33,6 @@ class RefreshTokenRequest(BaseModel):
 class UserResponse(BaseModel):
     user_id: int
     email: EmailStr
-    name: str
-    surname: str
-    phone: str
 
     class Config:
         from_attributes = True
@@ -47,10 +44,6 @@ class UserLogin(BaseModel):
 
 
 class UserRegistration(BaseModel):
-    name: str = Field(min_length=2, max_length=33, strip_whitespace=True)
-    surname: str = Field(min_length=2, max_length=33, strip_whitespace=True)
-
-    phone: str = Field(pattern=r"^\+?[1-9][0-9]{7,14}$")
     email: EmailStr
     password: str = Field(min_length=8, max_length=100)
 
