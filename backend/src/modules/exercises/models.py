@@ -24,5 +24,5 @@ class Exercise(Base):
     is_bodyweight: Mapped[bool] = mapped_column(Boolean, default=False)
 
     user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=True
+        ForeignKey("users.user_id", ondelete="CASCADE"), nullable=True
     )
