@@ -1,0 +1,26 @@
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy import select, or_
+from sqlalchemy.ext.asyncio import AsyncSession
+from src.core.db_helper import db_helper
+from src.modules.users.dependencies import get_current_user
+
+from .schemas import WorkoutResponse, WorkoutCreate
+from . import service
+
+router = APIRouter(tags=["Workouts"])
+SessionDep = Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+
+
+@router.post(
+    "/workouts", response_model=WorkoutResponse, status_code=status.HTTP_201_CREATED
+)
+async def create_workout(
+    session: SessionDep,
+    workouts_in: WorkoutCreate,
+    user_id: int = Depends(get_current_user),
+):
+    return await service.create_workout(
+        session=session, workouts_in=workouts_in, user_id=user_id
+    )

@@ -8,9 +8,9 @@ from src.modules.exercises.models import Exercise
 
 from typing import TYPE_CHECKING
 
-
 if TYPE_CHECKING:
     from src.modules.users.models import User
+
 
 class Workout(Base):
     __tablename__ = "workouts"
@@ -26,7 +26,6 @@ class Workout(Base):
     )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    # ОБЯЗАТЕЛЬНО: обратная связь к User
     user: Mapped[User] = relationship(back_populates="workouts")
 
     sets: Mapped[list[WorkoutSet]] = relationship(
@@ -45,13 +44,9 @@ class WorkoutSet(Base):
         ForeignKey("exercises.id", ondelete="CASCADE"), index=True
     )
 
-    set_number: Mapped[int] = mapped_column(
-        Integer
-    )
+    set_number: Mapped[int] = mapped_column(Integer)
     reps: Mapped[int] = mapped_column(Integer)
-    extra_weight: Mapped[float] = mapped_column(
-        Float, default=0.0
-    )
+    extra_weight: Mapped[float] = mapped_column(Float, default=0.0)
     is_warmup: Mapped[bool] = mapped_column(Boolean, default=False)
 
     workout: Mapped[Workout] = relationship(back_populates="sets")
