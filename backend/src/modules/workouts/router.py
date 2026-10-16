@@ -12,14 +12,18 @@ from .schemas import (
     WorkoutSetUpdate,
     WorkoutUpdate,
     WorkoutSetCreate,
+    WorkoutSetResponse,
 )
 from . import service
 
-router = APIRouter(tags=["Workouts"])
+workout_router = APIRouter(tags=["Workouts"])
+
+set_router = APIRouter(tags=["Sets"])
+
 SessionDep = Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 
 
-@router.get(
+@workout_router.get(
     "/workouts/{workout_id}",
     response_model=WorkoutResponse,
     status_code=status.HTTP_200_OK,
@@ -36,7 +40,7 @@ async def get_workout(
     )
 
 
-@router.post(
+@workout_router.post(
     "/workouts", response_model=WorkoutResponse, status_code=status.HTTP_201_CREATED
 )
 async def create_workout(
@@ -49,7 +53,7 @@ async def create_workout(
     )
 
 
-@router.post(
+@set_router.post(
     "/workouts/{workout_id}/sets",
     response_model=WorkoutResponse,
     status_code=status.HTTP_201_CREATED,
@@ -65,7 +69,7 @@ async def create_workout_set(
     )
 
 
-@router.patch(
+@workout_router.patch(
     "/workouts/{workout_id}",
     response_model=WorkoutResponse,
     status_code=status.HTTP_200_OK,
@@ -84,7 +88,26 @@ async def update_workout(
     )
 
 
-@router.delete("/workouts/{workout_id}", status_code=status.HTTP_204_NO_CONTENT)
+@set_router.patch(
+    "/sets/{set_id}",
+    response_model=WorkoutSetResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def update_workout_set(
+    set_id: int,
+    set_in: WorkoutSetUpdate,
+    session: SessionDep,
+    user_id: int = Depends(get_current_user),
+):
+    return await service.update_workout_set(
+        session=session,
+        set_id=set_id,
+        set_in=set_in,
+        user_id=user_id,
+    )
+
+
+@workout_router.delete("/workouts/{workout_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_workout(
     workout_id: int,
     session: SessionDep,

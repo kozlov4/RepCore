@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from sqlalchemy.orm import joinedload, selectinload
 
-from .schemas import WorkoutCreate, WorkoutUpdate, WorkoutSetCreate
+from .schemas import WorkoutCreate, WorkoutUpdate, WorkoutSetCreate, WorkoutSetUpdate
 from .models import Workout, WorkoutSet
 
 
@@ -118,3 +118,40 @@ async def create_workout_set(
     workout_with_sets = result.scalars().first()
 
     return workout_with_sets
+
+
+async def update_workout_set(
+    session: AsyncSession, set_id: int, set_in: WorkoutSetUpdate, user_id: int
+):
+    query = (
+        select(WorkoutSet)
+        .join(WorkoutSet.workout)
+        .where(
+            WorkoutSet.id == set_id,
+            Workout.user_id == user_id,
+        )
+    )
+    result = await session.execute(query)
+    db_set = result.scalars().first()
+
+    if not db_set:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Подход не найден или у вас нет прав на его изменение",
+        )
+
+    update_data = set_in.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_set, key, value)
+
+    await session.commit()
+
+    refresh_query = (
+        select(WorkoutSet)
+        .options(joinedload(WorkoutSet.exercise))
+        .where(WorkoutSet.id == set_id)
+    )
+    refresh_result = await session.execute(refresh_query)
+    updated_set = refresh_result.scalars().first()
+
+    return updated_set
