@@ -155,3 +155,25 @@ async def update_workout_set(
     updated_set = refresh_result.scalars().first()
 
     return updated_set
+
+
+async def delete_workout_set(session: AsyncSession, set_id: int, user_id: int):
+    query = (
+        select(WorkoutSet)
+        .join(WorkoutSet.workout)
+        .where(
+            WorkoutSet.id == set_id,
+            Workout.user_id == user_id,
+        )
+    )
+    result = await session.execute(query)
+    db_set = result.scalars().first()
+
+    if not db_set:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Сет не найдена или у вас нет прав на его удаление",
+        )
+
+    await session.delete(db_set)
+    await session.commit()
