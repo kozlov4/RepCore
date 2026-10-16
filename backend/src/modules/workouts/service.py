@@ -3,7 +3,7 @@ from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from sqlalchemy.orm import joinedload, selectinload
-
+from datetime import date
 from .schemas import WorkoutCreate, WorkoutUpdate, WorkoutSetCreate, WorkoutSetUpdate
 from .models import Workout, WorkoutSet
 
@@ -51,6 +51,33 @@ async def get_workout(session: AsyncSession, user_id: int, workout_id: int):
         )
 
     return workout
+
+
+async def get_workouts_list(
+    session: AsyncSession, user_id: int, date_from: date | None, date_to: date | None
+):
+    query = (
+        select(Workout)
+        .options(selectinload(Workout.sets).joinedload(WorkoutSet.exercise))
+        .where(Workout.user_id == user_id)
+    )
+
+    if date_from is not None:
+        query = query.where(Workout.workout_date >= date_from)
+    if date_to is not None:
+        query = query.where(Workout.workout_date <= date_to)
+
+    query = query.order_by(Workout.workout_date.desc(), Workout.id.desc())
+
+    result = await session.execute(query)
+    workouts = result.scalars().all()
+
+    if not workouts:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Тренировки не найдены"
+        )
+
+    return workouts
 
 
 async def update_workout(

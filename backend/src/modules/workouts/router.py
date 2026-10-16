@@ -1,5 +1,6 @@
+import datetime
 from typing import Annotated
-
+from datetime import date
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,6 +38,33 @@ async def get_workout(
         session=session,
         user_id=user_id,
         workout_id=workout_id,
+    )
+
+
+@workout_router.get(
+    "/workouts",
+    response_model=list[WorkoutResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_workouts_list(
+    session: SessionDep,
+    user_id: int = Depends(get_current_user),
+    date_from: date | None = Query(
+        default=None,
+        description="Фильтр: начальная дата диапазона (включительно), формат YYYY-MM-DD",
+        examples=["2026-10-01"],
+    ),
+    date_to: date | None = Query(
+        default=None,
+        description="Фильтр: конечная дата диапазона (включительно), формат YYYY-MM-DD",
+        examples=["2026-10-16"],
+    ),
+):
+    return await service.get_workouts_list(
+        session=session,
+        user_id=user_id,
+        date_from=date_from,
+        date_to=date_to,
     )
 
 
