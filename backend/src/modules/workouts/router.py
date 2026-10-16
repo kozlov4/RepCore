@@ -6,7 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.db_helper import db_helper
 from src.modules.users.dependencies import get_current_user
 
-from .schemas import WorkoutResponse, WorkoutCreate, WorkoutSetUpdate, WorkoutUpdate
+from .schemas import (
+    WorkoutResponse,
+    WorkoutCreate,
+    WorkoutSetUpdate,
+    WorkoutUpdate,
+    WorkoutSetCreate,
+)
 from . import service
 
 router = APIRouter(tags=["Workouts"])
@@ -40,6 +46,22 @@ async def create_workout(
 ):
     return await service.create_workout(
         session=session, workouts_in=workouts_in, user_id=user_id
+    )
+
+
+@router.post(
+    "/workouts/{workout_id}/sets",
+    response_model=WorkoutResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_workout_set(
+    session: SessionDep,
+    workout_id: int,
+    set_in: WorkoutSetCreate,
+    user_id: int = Depends(get_current_user),
+):
+    return await service.create_workout_set(
+        session=session, set_in=set_in, user_id=user_id, workout_id=workout_id
     )
 
 

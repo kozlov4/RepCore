@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from sqlalchemy.orm import joinedload, selectinload
 
-from .schemas import WorkoutCreate, WorkoutUpdate
+from .schemas import WorkoutCreate, WorkoutUpdate, WorkoutSetCreate
 from .models import Workout, WorkoutSet
 
 
@@ -94,3 +94,27 @@ async def delete_workout(session: AsyncSession, workout_id: int, user_id: int):
 
     await session.delete(workout)
     await session.commit()
+
+
+async def create_workout_set(
+    session: AsyncSession, user_id: int, workout_id: int, set_in: WorkoutSetCreate
+):
+    new_workout_set = WorkoutSet(
+        workout_id=workout_id,
+        exercise_id=set_in.exercise_id,
+        set_number=set_in.set_number,
+        reps=set_in.reps,
+        extra_weight=set_in.extra_weight,
+        is_warmup=set_in.is_warmup,
+    )
+    session.add(new_workout_set)
+    await session.commit()
+    query = (
+        select(Workout)
+        .options(selectinload(Workout.sets).joinedload(WorkoutSet.exercise))
+        .where(Workout.id == workout_id)
+    )
+    result = await session.execute(query)
+    workout_with_sets = result.scalars().first()
+
+    return workout_with_sets
