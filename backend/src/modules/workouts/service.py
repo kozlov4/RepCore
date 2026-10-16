@@ -2,9 +2,10 @@ from fastapi import HTTPException
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from sqlalchemy.orm import joinedload, selectinload
 
 from .schemas import WorkoutCreate
-from .models import Workout
+from .models import Workout, WorkoutSet
 
 
 async def create_workout(
@@ -20,9 +21,33 @@ async def create_workout(
     )
     session.add(new_workout)
     await session.commit()
-    await session.refresh(new_workout)
-    return new_workout
+    query = (
+        select(Workout)
+        .options(selectinload(Workout.sets))
+        .where(Workout.id == new_workout.id)
+    )
+    result = await session.execute(query)
+    workout_with_sets = result.scalars().first()
+
+    return workout_with_sets
 
 
 async def get_workout(session: AsyncSession, user_id: int, workout_id: int):
-    pass
+    query = (
+        select(Workout)
+        .options(selectinload(Workout.sets).joinedload(WorkoutSet.exercise))
+        .where(
+            Workout.id == workout_id,
+            Workout.user_id == user_id,
+        )
+    )
+
+    result = await session.execute(query)
+    workout = result.scalar_one_or_none()
+
+    if not workout:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Тренировка не найдена"
+        )
+
+    return workout
