@@ -79,3 +79,18 @@ async def update_workout(
     result = await session.execute(query)
     workout_with_sets = result.scalars().first()
     return workout
+
+
+async def delete_workout(session: AsyncSession, workout_id: int, user_id: int):
+    query = select(Workout).where(Workout.id == workout_id, Workout.user_id == user_id)
+    result = await session.execute(query)
+    workout = result.scalars().first()
+
+    if not workout:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Тренироовка не найдена или у вас нет прав на его удаление",
+        )
+
+    await session.delete(workout)
+    await session.commit()

@@ -60,3 +60,14 @@ async def update_workout(
         workout_in=workout_in,
         user_id=user_id,
     )
+
+
+@router.delete("/workouts/{workout_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_workout(
+    workout_id: int,
+    session: SessionDep,
+    user_id: int = Depends(get_current_user),
+):
+    await service.delete_workout(
+        session=session, workout_id=workout_id, user_id=user_id
+    )
