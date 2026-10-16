@@ -8,6 +8,7 @@ from src.modules.users.dependencies import get_current_user
 
 from .models import Exercise, MuscleGroup
 from .schemas import ExerciseCreate, ExerciseResponse, ExerciseUpdate
+from src.modules.workouts.schemas import WorkoutSetResponse
 from . import services
 
 router = APIRouter(tags=["Exercises"])
@@ -34,6 +35,19 @@ async def get_exercises(
         is_own_exercise=is_own_exercise,
         search=search,
         user_id=user_id,
+    )
+
+
+@router.get(
+    "/exercises/{exercise_id}/last-performance",
+    response_model=list[WorkoutSetResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_last_exercise(
+    session: SessionDep, exercise_id: int, user_id: int = Depends(get_current_user)
+):
+    return await services.get_last_exercise_performance(
+        session=session, exercise_id=exercise_id, user_id=user_id
     )
 
 

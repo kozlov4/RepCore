@@ -2,9 +2,10 @@ from fastapi import HTTPException
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
+from sqlalchemy.orm import joinedload, selectinload
 from .models import Exercise, MuscleGroup
 from .schemas import ExerciseCreate, ExerciseUpdate
+from src.modules.workouts.models import Workout, WorkoutSet
 
 
 async def get_filtered_exercises(
@@ -37,6 +38,34 @@ async def get_filtered_exercises(
 
     result = await session.execute(query)
     return result.scalars().all()
+
+
+async def get_last_exercise_performance(
+    session: AsyncSession, exercise_id: int, user_id: int
+):
+    last_workout_subquery = (
+        select(Workout.id)
+        .join(Workout.sets)
+        .where(Workout.user_id == user_id, WorkoutSet.exercise_id == exercise_id)
+        .order_by(Workout.workout_date.desc(), Workout.id.desc())
+        .limit(1)
+        .scalar_subquery()
+    )
+
+    query = (
+        select(WorkoutSet)
+        .options(joinedload(WorkoutSet.exercise))
+        .where(
+            WorkoutSet.workout_id == last_workout_subquery,
+            WorkoutSet.exercise_id == exercise_id,
+        )
+        .order_by(WorkoutSet.set_number)
+    )
+
+    result = await session.execute(query)
+    last_sets = result.scalars().all()
+
+    return last_sets
 
 
 async def create_custom_exercise(
