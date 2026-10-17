@@ -5,6 +5,7 @@ description = ""
 authors = [
     {name = "Serge Kozlov",email = "serge.kozlov.dev@gmail.com"}
 ]
+package-mode = false
 requires-python = ">=3.14,<4.0"
 dependencies = [
     "fastapi (>=0.143.0,<0.144.0)",

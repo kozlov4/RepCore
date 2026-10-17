@@ -13,7 +13,6 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-zinc-950" x-data="repcoreApp()">
 
-    <!-- Уведомления (Тосты) -->
     <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2" x-cloak>
         <template x-for="toast in toasts" :key="toast.id">
             <div :class="toast.type === 'error' ? 'bg-red-600' : 'bg-emerald-600'"
@@ -42,7 +41,7 @@
                     <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-zinc-400 mb-1">Пароль</label>
+                    <label class="block text-xs text-zinc-400 mb-1">Password</label>
                     <input type="password" x-model="authForm.password" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Войти в систему</button>
@@ -54,7 +53,7 @@
                     <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-zinc-400 mb-1">Пароль (мин. 8 символов)</label>
+                    <label class="block text-xs text-zinc-400 mb-1">Password (at least 8 characters)</label>
                     <input type="password" x-model="authForm.password" minlength="8" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Создать аккаунт</button>
@@ -66,7 +65,7 @@
                     <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-zinc-400 mb-1">6-значный код подтверждения</label>
+                    <label class="block text-xs text-zinc-400 mb-1">6-digit confirmation code</label>
                     <input type="text" x-model="authForm.code" maxlength="6" placeholder="123456" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 tracking-widest text-center text-lg font-bold focus:outline-none focus:border-emerald-500">
                 </div>
                 <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Подтвердить почту</button>
@@ -92,15 +91,15 @@
 
         <div class="grid grid-cols-3 gap-4 mb-6">
             <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
-                <div class="text-xs text-zinc-400">Тренировок (неделя)</div>
+                <div class="text-xs text-zinc-400">Workouts (per week)</div>
                 <div class="text-2xl font-black text-emerald-400 mt-1" x-text="summary.total_workouts">0</div>
             </div>
             <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
-                <div class="text-xs text-zinc-400">Рабочих подходов</div>
+                <div class="text-xs text-zinc-400">Practical Approaches</div>
                 <div class="text-2xl font-black text-zinc-100 mt-1" x-text="summary.total_sets">0</div>
             </div>
             <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
-                <div class="text-xs text-zinc-400">Всего повторений</div>
+                <div class="text-xs text-zinc-400">Total repetitions</div>
                 <div class="text-2xl font-black text-zinc-100 mt-1" x-text="summary.total_reps">0</div>
             </div>
         </div>
@@ -108,7 +107,7 @@
         <div x-show="tab === 'workouts'" class="grid md:grid-cols-12 gap-6">
             <div class="md:col-span-5 space-y-6">
                 <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
-                    <h2 class="font-bold text-lg mb-4">Новая тренировка</h2>
+                    <h2 class="font-bold text-lg mb-4">New Workout</h2>
                     <form @submit.prevent="createWorkout()" class="space-y-3">
                         <input type="text" x-model="newWorkout.title" placeholder="Напр: Верх тела (Тяги + Жим)" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none">
                         <input type="date" x-model="newWorkout.workout_date" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none">
@@ -118,7 +117,7 @@
                 </div>
 
                 <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
-                    <h2 class="font-bold text-lg mb-3">История</h2>
+                    <h2 class="font-bold text-lg mb-3">History</h2>
                     <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                         <template x-for="w in workouts" :key="w.id">
                             <div @click="selectWorkout(w.id)"
@@ -128,10 +127,10 @@
                                     <div class="font-bold text-sm" x-text="w.title"></div>
                                     <div class="text-xs text-zinc-400" x-text="w.workout_date"></div>
                                 </div>
-                                <button @click.stop="deleteWorkout(w.id)" class="text-zinc-500 hover:text-red-400 text-xs px-2 py-1">Удалить</button>
+                                <button @click.stop="deleteWorkout(w.id)" class="text-zinc-500 hover:text-red-400 text-xs px-2 py-1">Delete</button>
                             </div>
                         </template>
-                        <div x-show="workouts.length === 0" class="text-xs text-zinc-500 text-center py-6">Пока нет тренировок. Создай первую!</div>
+                        <div x-show="workouts.length === 0" class="text-xs text-zinc-500 text-center py-6">There are no workouts yet. Create your first one!</div>
                     </div>
                 </div>
             </div>
