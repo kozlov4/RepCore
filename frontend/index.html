@@ -2,105 +2,110 @@
 <html lang="ru" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>RepCore — Workout & Strength Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         [x-cloak] { display: none !important; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-zinc-950" x-data="repcoreApp()">
 
-    <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2" x-cloak>
+    <div class="fixed bottom-5 left-5 right-5 sm:left-auto sm:w-96 z-50 flex flex-col gap-2" x-cloak>
         <template x-for="toast in toasts" :key="toast.id">
             <div :class="toast.type === 'error' ? 'bg-red-600' : 'bg-emerald-600'"
-                 class="px-4 py-3 rounded-lg shadow-lg text-white font-medium text-sm flex items-center gap-2 transition-all">
+                 class="px-4 py-3 rounded-lg shadow-lg text-white font-medium text-sm flex items-center justify-between gap-2 transition-all">
                 <span x-text="toast.message"></span>
             </div>
         </template>
     </div>
 
     <div x-show="!token" x-cloak class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
+        <div class="bg-zinc-900 border border-zinc-800 p-6 sm:p-8 rounded-2xl w-full max-w-md shadow-2xl">
             <div class="flex items-center gap-2 mb-6 justify-center">
                 <div class="w-3 h-8 bg-emerald-500 rounded-full"></div>
                 <h1 class="text-3xl font-black tracking-wider uppercase">Rep<span class="text-emerald-500">Core</span></h1>
             </div>
 
-            <div class="grid grid-cols-3 gap-1 bg-zinc-950 p-1 rounded-xl mb-6 border border-zinc-800 text-xs font-semibold">
-                <button @click="authMode = 'login'" :class="authMode === 'login' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Login</button>
-                <button @click="authMode = 'register'" :class="authMode === 'register' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Registration</button>
-                <button @click="authMode = 'verify'" :class="authMode === 'verify' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Code from the email</button>
+            <div class="flex flex-col sm:flex-row gap-1 bg-zinc-950 p-1 rounded-xl mb-6 border border-zinc-800 text-xs font-semibold">
+                <button @click="authMode = 'login'" :class="authMode === 'login' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="flex-1 py-2.5 rounded-lg transition">Login</button>
+                <button @click="authMode = 'register'" :class="authMode === 'register' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="flex-1 py-2.5 rounded-lg transition">Registration</button>
+                <button @click="authMode = 'verify'" :class="authMode === 'verify' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="flex-1 py-2.5 rounded-lg transition">Code</button>
             </div>
 
             <form x-show="authMode === 'login'" @submit.prevent="login()" class="space-y-4">
                 <div>
                     <label class="block text-xs text-zinc-400 mb-1">Email</label>
-                    <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
+                    <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 sm:py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-xs text-zinc-400 mb-1">Password</label>
-                    <input type="password" x-model="authForm.password" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
+                    <input type="password" x-model="authForm.password" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 sm:py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Log In</button>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3.5 sm:py-3 rounded-xl transition">Log In</button>
             </form>
 
             <form x-show="authMode === 'register'" @submit.prevent="register()" class="space-y-4">
                 <div>
                     <label class="block text-xs text-zinc-400 mb-1">Email</label>
-                    <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
+                    <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 sm:py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-zinc-400 mb-1">Password (at least 8 characters)</label>
-                    <input type="password" x-model="authForm.password" minlength="8" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
+                    <label class="block text-xs text-zinc-400 mb-1">Password (min 8 chars)</label>
+                    <input type="password" x-model="authForm.password" minlength="8" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 sm:py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Create an Account</button>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3.5 sm:py-3 rounded-xl transition">Create an Account</button>
             </form>
 
             <form x-show="authMode === 'verify'" @submit.prevent="verifyEmail()" class="space-y-4">
                 <div>
                     <label class="block text-xs text-zinc-400 mb-1">Email</label>
-                    <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
+                    <input type="email" x-model="authForm.email" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 sm:py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-xs text-zinc-400 mb-1">6-digit confirmation code</label>
-                    <input type="text" x-model="authForm.code" maxlength="6" placeholder="123456" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 tracking-widest text-center text-lg font-bold focus:outline-none focus:border-emerald-500">
+                    <input type="text" x-model="authForm.code" maxlength="6" placeholder="123456" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 sm:py-2.5 tracking-widest text-center text-lg font-bold focus:outline-none focus:border-emerald-500">
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Verify your email address</button>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3.5 sm:py-3 rounded-xl transition">Verify your email</button>
             </form>
         </div>
     </div>
 
-    <div x-show="token" x-cloak class="max-w-6xl mx-auto p-4 md:p-6">
-        <header class="flex flex-wrap items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl mb-6">
-            <div class="flex items-center gap-2">
-                <div class="w-2.5 h-6 bg-emerald-500 rounded-full"></div>
-                <span class="text-xl font-black tracking-wider uppercase">Rep<span class="text-emerald-500">Core</span></span>
+    <div x-show="token" x-cloak class="max-w-6xl mx-auto p-4 md:p-6 pb-20">
+        <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl mb-6">
+            <div class="flex items-center justify-between w-full sm:w-auto">
+                <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-6 bg-emerald-500 rounded-full"></div>
+                    <span class="text-xl font-black tracking-wider uppercase">Rep<span class="text-emerald-500">Core</span></span>
+                </div>
+                <button @click="logout()" class="sm:hidden text-xs text-zinc-400 hover:text-red-400 px-3 py-2 rounded-lg border border-zinc-800 transition">Log Out</button>
             </div>
 
-            <nav class="flex gap-2">
-                <button @click="switchTab('workouts')" :class="tab === 'workouts' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'" class="px-4 py-2 rounded-xl text-sm transition">Тренировки</button>
-                <button @click="switchTab('exercises')" :class="tab === 'exercises' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'" class="px-4 py-2 rounded-xl text-sm transition">Упражнения</button>
-                <button @click="switchTab('analytics')" :class="tab === 'analytics' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'" class="px-4 py-2 rounded-xl text-sm transition">Аналитика & PR</button>
+            <nav class="flex gap-2 overflow-x-auto w-full sm:w-auto scrollbar-hide">
+                <button @click="switchTab('workouts')" :class="tab === 'workouts' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'" class="px-4 py-2.5 sm:py-2 rounded-xl text-sm whitespace-nowrap transition flex-1 sm:flex-none text-center">Тренировки</button>
+                <button @click="switchTab('exercises')" :class="tab === 'exercises' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'" class="px-4 py-2.5 sm:py-2 rounded-xl text-sm whitespace-nowrap transition flex-1 sm:flex-none text-center">Упражнения</button>
+                <button @click="switchTab('analytics')" :class="tab === 'analytics' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'" class="px-4 py-2.5 sm:py-2 rounded-xl text-sm whitespace-nowrap transition flex-1 sm:flex-none text-center">Аналитика & PR</button>
             </nav>
 
-            <button @click="logout()" class="text-xs text-zinc-400 hover:text-red-400 px-3 py-2 rounded-lg border border-zinc-800 transition">Log Out</button>
+            <button @click="logout()" class="hidden sm:block text-xs text-zinc-400 hover:text-red-400 px-3 py-2 rounded-lg border border-zinc-800 transition">Log Out</button>
         </header>
 
-        <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
+            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex sm:block justify-between items-center">
                 <div class="text-xs text-zinc-400">Workouts (per week)</div>
-                <div class="text-2xl font-black text-emerald-400 mt-1" x-text="summary.total_workouts">0</div>
+                <div class="text-2xl font-black text-emerald-400 sm:mt-1" x-text="summary.total_workouts">0</div>
             </div>
-            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
-                <div class="text-xs text-zinc-400">Practical Approaches</div>
-                <div class="text-2xl font-black text-zinc-100 mt-1" x-text="summary.total_sets">0</div>
+            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex sm:block justify-between items-center">
+                <div class="text-xs text-zinc-400">Working Sets</div>
+                <div class="text-2xl font-black text-zinc-100 sm:mt-1" x-text="summary.total_sets">0</div>
             </div>
-            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
+            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex sm:block justify-between items-center">
                 <div class="text-xs text-zinc-400">Total repetitions</div>
-                <div class="text-2xl font-black text-zinc-100 mt-1" x-text="summary.total_reps">0</div>
+                <div class="text-2xl font-black text-zinc-100 sm:mt-1" x-text="summary.total_reps">0</div>
             </div>
         </div>
 
@@ -109,16 +114,16 @@
                 <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
                     <h2 class="font-bold text-lg mb-4">New Workout</h2>
                     <form @submit.prevent="createWorkout()" class="space-y-3">
-                        <input type="text" x-model="newWorkout.title" placeholder="For example: Upper Body (Pull-ups + Bench Press)" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none">
-                        <input type="date" x-model="newWorkout.workout_date" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none">
-                        <textarea x-model="newWorkout.notes" placeholder="Notes on How I'm Feeling..." rows="2" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none"></textarea>
-                        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-sm transition">+ Start your workout</button>
+                        <input type="text" x-model="newWorkout.title" placeholder="Ex: Upper Body" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-3 sm:py-2 text-sm focus:border-emerald-500 focus:outline-none">
+                        <input type="date" x-model="newWorkout.workout_date" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-3 sm:py-2 text-sm focus:border-emerald-500 focus:outline-none">
+                        <textarea x-model="newWorkout.notes" placeholder="Notes on how I feel..." rows="2" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-3 sm:py-2 text-sm focus:border-emerald-500 focus:outline-none"></textarea>
+                        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 sm:py-2.5 rounded-xl text-sm transition">+ Start Workout</button>
                     </form>
                 </div>
 
                 <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
                     <h2 class="font-bold text-lg mb-3">History</h2>
-                    <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+                    <div class="space-y-2 max-h-[300px] sm:max-h-[420px] overflow-y-auto pr-1">
                         <template x-for="w in workouts" :key="w.id">
                             <div @click="selectWorkout(w.id)"
                                  :class="activeWorkout && activeWorkout.id === w.id ? 'border-emerald-500 bg-zinc-800/60' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'"
@@ -130,26 +135,26 @@
                                 <button @click.stop="deleteWorkout(w.id)" class="text-zinc-500 hover:text-red-400 text-xs px-2 py-1">Delete</button>
                             </div>
                         </template>
-                        <div x-show="workouts.length === 0" class="text-xs text-zinc-500 text-center py-6">There are no workouts yet. Create your first one!</div>
+                        <div x-show="workouts.length === 0" class="text-xs text-zinc-500 text-center py-6">No workouts yet.</div>
                     </div>
                 </div>
             </div>
 
-            <div class="md:col-span-7">
+            <div class="md:col-span-7" id="active-workout-section">
                 <template x-if="activeWorkout">
-                    <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl space-y-6">
+                    <div class="bg-zinc-900 border border-zinc-800 p-4 sm:p-6 rounded-2xl space-y-6">
                         <div class="border-b border-zinc-800 pb-4">
                             <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-md font-medium" x-text="activeWorkout.workout_date"></span>
-                            <h2 class="text-2xl font-black mt-2" x-text="activeWorkout.title"></h2>
+                            <h2 class="text-xl sm:text-2xl font-black mt-2" x-text="activeWorkout.title"></h2>
                             <p class="text-xs text-zinc-400 mt-1" x-show="activeWorkout.notes" x-text="activeWorkout.notes"></p>
                         </div>
 
                         <form @submit.prevent="addSet()" class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-4">
                             <div class="text-sm font-bold text-emerald-400">Add a set</div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                                 <div>
                                     <label class="text-xs text-zinc-400">Exercise</label>
-                                    <select x-model="newSet.exercise_id" @change="fetchLastPerformance(newSet.exercise_id)" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm mt-1">
+                                    <select x-model="newSet.exercise_id" @change="fetchLastPerformance(newSet.exercise_id)" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-3 sm:py-2 text-sm mt-1">
                                         <option value="">-- Choose an exercise --</option>
                                         <template x-for="ex in exercises" :key="ex.id">
                                             <option :value="ex.id" x-text="`${ex.name} (${ex.muscle_group})`"></option>
@@ -159,83 +164,83 @@
                                 <div class="grid grid-cols-3 gap-2">
                                     <div>
                                         <label class="text-xs text-zinc-400">Set №</label>
-                                        <input type="number" x-model.number="newSet.set_number" min="1" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-sm mt-1">
+                                        <input type="number" x-model.number="newSet.set_number" min="1" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-3 sm:py-2 text-sm mt-1 text-center sm:text-left">
                                     </div>
                                     <div>
-                                        <label class="text-xs text-zinc-400">Repeat</label>
-                                        <input type="number" x-model.number="newSet.reps" min="1" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-sm mt-1">
+                                        <label class="text-xs text-zinc-400">Reps</label>
+                                        <input type="number" x-model.number="newSet.reps" min="1" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-3 sm:py-2 text-sm mt-1 text-center sm:text-left">
                                     </div>
                                     <div>
-                                        <label class="text-xs text-zinc-400">+Weight (kg)</label>
-                                        <input type="number" step="0.5" x-model.number="newSet.extra_weight" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-sm mt-1">
+                                        <label class="text-xs text-zinc-400">+Kg</label>
+                                        <input type="number" step="0.5" x-model.number="newSet.extra_weight" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-3 sm:py-2 text-sm mt-1 text-center sm:text-left">
                                     </div>
                                 </div>
                             </div>
 
                             <div x-show="lastPerformance.length > 0" class="bg-zinc-900/90 border border-emerald-500/30 p-3 rounded-lg text-xs">
-                                <span class="text-emerald-400 font-bold">Last time, it was:</span>
+                                <span class="text-emerald-400 font-bold">Last time:</span>
                                 <div class="flex flex-wrap gap-2 mt-1.5">
                                     <template x-for="lp in lastPerformance" :key="lp.id">
                                         <span class="bg-zinc-950 px-2.5 py-1 rounded border border-zinc-800">
-                                            Сет <b x-text="lp.set_number"></b>: <b x-text="lp.reps"></b> Repeat × <b x-text="lp.extra_weight"></b> kg
+                                            Set <b x-text="lp.set_number"></b>: <b x-text="lp.reps"></b> reps × <b x-text="lp.extra_weight"></b> kg
                                         </span>
                                     </template>
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between pt-1">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
                                 <label class="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
-                                    <input type="checkbox" x-model="newSet.is_warmup" class="rounded bg-zinc-900 border-zinc-700 text-emerald-500 focus:ring-0">
-                                    Warm-up set (does not count toward records)
+                                    <input type="checkbox" x-model="newSet.is_warmup" class="rounded bg-zinc-900 border-zinc-700 text-emerald-500 focus:ring-0 w-4 h-4">
+                                    Warm-up (ignores records)
                                 </label>
-                                <button type="submit" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-5 py-2 rounded-lg text-sm transition">Записать подход</button>
+                                <button type="submit" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-5 py-3 sm:py-2 rounded-lg text-sm transition w-full sm:w-auto">Record Set</button>
                             </div>
                         </form>
 
                         <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-zinc-300">Approaches Taken</h3>
+                            <h3 class="text-sm font-bold text-zinc-300 mb-3">Logged Sets</h3>
                             <template x-for="s in activeWorkout.sets" :key="s.id">
-                                <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800 px-4 py-3 rounded-xl text-sm">
-                                    <div class="flex items-center gap-3">
-                                        <span class="w-6 h-6 rounded-full bg-zinc-800 text-xs flex items-center justify-center font-bold" x-text="s.set_number"></span>
-                                        <div>
+                                <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800 px-4 py-3 rounded-xl text-sm flex-wrap sm:flex-nowrap gap-2">
+                                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                                        <span class="w-7 h-7 shrink-0 rounded-full bg-zinc-800 text-xs flex items-center justify-center font-bold" x-text="s.set_number"></span>
+                                        <div class="truncate">
                                             <span class="font-bold" x-text="s.exercise.name"></span>
-                                            <span x-show="s.is_warmup" class="ml-2 text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded uppercase">Разминка</span>
+                                            <span x-show="s.is_warmup" class="ml-2 text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded uppercase">Warmup</span>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-4">
-                                        <div class="font-mono text-emerald-400 font-bold">
-                                            <span x-text="s.reps"></span> Repeat
-                                            <span x-show="s.extra_weight > 0" x-text="`(+${s.extra_weight} кг)`"></span>
+                                    <div class="flex items-center justify-end gap-4 w-full sm:w-auto">
+                                        <div class="font-mono text-emerald-400 font-bold text-base sm:text-sm">
+                                            <span x-text="s.reps"></span> reps
+                                            <span x-show="s.extra_weight > 0" x-text="`(+${s.extra_weight}kg)`"></span>
                                         </div>
-                                        <button @click="deleteSet(s.id)" class="text-zinc-500 hover:text-red-400 text-xs">✕</button>
+                                        <button @click="deleteSet(s.id)" class="text-zinc-500 hover:text-red-400 text-xs p-2 -mr-2">✕</button>
                                     </div>
                                 </div>
                             </template>
                             <div x-show="!activeWorkout.sets || activeWorkout.sets.length === 0" class="text-xs text-zinc-500 text-center py-6">
-                                There are no sets recorded for this workout yet.
+                                No sets recorded yet.
                             </div>
                         </div>
                     </div>
                 </template>
 
-                <div x-show="!activeWorkout" class="bg-zinc-900 border border-zinc-800 p-12 rounded-2xl text-center text-zinc-500 text-sm">
-                    Select a workout from the left or create a new one to start logging your sets.
+                <div x-show="!activeWorkout" class="bg-zinc-900 border border-zinc-800 p-8 sm:p-12 rounded-2xl text-center text-zinc-500 text-sm">
+                    Select a workout or create a new one.
                 </div>
             </div>
         </div>
 
         <div x-show="tab === 'exercises'" class="grid md:grid-cols-12 gap-6">
-            <div class="md:col-span-4 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl h-fit">
-                <h2 class="font-bold text-lg mb-4">Add an exercise</h2>
+            <div class="md:col-span-4 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl h-fit order-2 md:order-1">
+                <h2 class="font-bold text-lg mb-4">Add Exercise</h2>
                 <form @submit.prevent="createExercise()" class="space-y-3">
                     <div>
                         <label class="text-xs text-zinc-400">Title</label>
-                        <input type="text" x-model="newExercise.name" placeholder="For example: Forced exits" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm mt-1">
+                        <input type="text" x-model="newExercise.name" placeholder="Ex: Muscle Ups" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-3 sm:py-2 text-sm mt-1">
                     </div>
                     <div>
-                        <label class="text-xs text-zinc-400">Muscle group</label>
-                        <select x-model="newExercise.muscle_group" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm mt-1">
+                        <label class="text-xs text-zinc-400">Muscle Group</label>
+                        <select x-model="newExercise.muscle_group" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-3 sm:py-2 text-sm mt-1">
                             <option value="back">Back</option>
                             <option value="chest">Chest</option>
                             <option value="shoulders">Shoulders</option>
@@ -245,18 +250,18 @@
                         </select>
                     </div>
                     <label class="flex items-center gap-2 text-xs text-zinc-300 pt-1 cursor-pointer">
-                        <input type="checkbox" x-model="newExercise.is_bodyweight" class="rounded bg-zinc-950 border-zinc-700 text-emerald-500">
-                        Bodyweight Exercises (Calisthenics)
+                        <input type="checkbox" x-model="newExercise.is_bodyweight" class="rounded bg-zinc-950 border-zinc-700 text-emerald-500 w-4 h-4">
+                        Bodyweight (Calisthenics)
                     </label>
-                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-sm transition mt-2">Сохранить в каталог</button>
+                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 sm:py-2.5 rounded-xl text-sm transition mt-2">Save to Catalog</button>
                 </form>
             </div>
 
-            <div class="md:col-span-8 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-4">
-                <div class="flex flex-wrap gap-2 justify-between items-center">
-                    <input type="text" x-model="exerciseFilter.search" @input.debounce.300ms="fetchExercises()" placeholder="Search by title..." class="bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm">
-                    <select x-model="exerciseFilter.muscle_group" @change="fetchExercises()" class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm">
-                        <option value="">All muscle groups</option>
+            <div class="md:col-span-8 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-4 order-1 md:order-2">
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 justify-between items-center">
+                    <input type="text" x-model="exerciseFilter.search" @input.debounce.300ms="fetchExercises()" placeholder="Search..." class="w-full sm:w-auto bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-3 sm:py-2 text-sm flex-1">
+                    <select x-model="exerciseFilter.muscle_group" @change="fetchExercises()" class="w-full sm:w-auto bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3 sm:py-2 text-sm">
+                        <option value="">All groups</option>
                         <option value="back">Back</option>
                         <option value="chest">Chest</option>
                         <option value="shoulders">Shoulders</option>
@@ -266,17 +271,17 @@
                     </select>
                 </div>
 
-                <div class="grid sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <template x-for="ex in exercises" :key="ex.id">
                         <div class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl flex justify-between items-center">
                             <div>
                                 <div class="font-bold text-sm" x-text="ex.name"></div>
                                 <div class="flex gap-2 mt-1">
                                     <span class="text-[11px] bg-zinc-800 text-emerald-400 px-2 py-0.5 rounded uppercase" x-text="ex.muscle_group"></span>
-                                    <span x-show="ex.is_bodyweight" class="text-[11px] bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">Its weight</span>
+                                    <span x-show="ex.is_bodyweight" class="text-[11px] bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">Bodyweight</span>
                                 </div>
                             </div>
-                            <button @click="deleteExercise(ex.id)" class="text-zinc-500 hover:text-red-400 text-xs">Delete</button>
+                            <button @click="deleteExercise(ex.id)" class="text-zinc-500 hover:text-red-400 text-xs p-2 -mr-2">Del</button>
                         </div>
                     </template>
                 </div>
@@ -286,35 +291,35 @@
         <div x-show="tab === 'analytics'" class="grid md:grid-cols-12 gap-6">
             <div class="md:col-span-5 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-3">
                 <h2 class="font-bold text-lg">Personal Records (PR)</h2>
-                <div class="space-y-2.5">
+                <div class="space-y-2.5 max-h-[400px] overflow-y-auto pr-1">
                     <template x-for="r in records" :key="r.exercise_id">
                         <div class="bg-zinc-950 border border-zinc-800 p-3.5 rounded-xl flex justify-between items-center">
                             <div>
                                 <div class="font-bold text-sm" x-text="r.exercise_name"></div>
-                                <div class="text-xs text-zinc-500" x-text="`Рабочих подходов: ${r.total_working_sets}`"></div>
+                                <div class="text-[10px] text-zinc-500 uppercase mt-0.5" x-text="`Sets: ${r.total_working_sets}`"></div>
                             </div>
                             <div class="text-right font-mono">
-                                <div class="text-emerald-400 font-bold text-sm" x-text="`Макс вес: +${r.max_weight} кг`"></div>
-                                <div class="text-xs text-zinc-300" x-text="`Макс повт: ${r.max_reps}`"></div>
+                                <div class="text-emerald-400 font-bold text-sm" x-text="`+${r.max_weight}kg`"></div>
+                                <div class="text-xs text-zinc-300" x-text="`Max: ${r.max_reps} reps`"></div>
                             </div>
                         </div>
                     </template>
-                    <div x-show="records.length === 0" class="text-xs text-zinc-500 text-center py-6">Record at least one valid attempt to see your records.</div>
+                    <div x-show="records.length === 0" class="text-xs text-zinc-500 text-center py-6">Record sets to see your PRs.</div>
                 </div>
             </div>
 
             <div class="md:col-span-7 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-4">
-                <div class="flex justify-between items-center">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                     <h2 class="font-bold text-lg">Progress Chart</h2>
-                    <select x-model="chartExerciseId" @change="loadChart()" class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-sm">
-                        <option value="">-- Choose an exercise --</option>
+                    <select x-model="chartExerciseId" @change="loadChart()" class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm w-full sm:w-auto">
+                        <option value="">-- Choose exercise --</option>
                         <template x-for="ex in exercises" :key="ex.id">
                             <option :value="ex.id" x-text="ex.name"></option>
                         </template>
                     </select>
                 </div>
-                <div class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl">
-                    <canvas id="progressChart" height="220"></canvas>
+                <div class="bg-zinc-950 border border-zinc-800 p-2 sm:p-4 rounded-xl overflow-hidden">
+                    <canvas id="progressChart" height="250" class="w-full"></canvas>
                 </div>
             </div>
         </div>
@@ -358,72 +363,72 @@
                     setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 3500);
                 },
 
-async api(path, options = {}) {
-    const headers = options.headers || {};
-    if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
-    if (!(options.body instanceof URLSearchParams) && !headers['Content-Type']) {
-        headers['Content-Type'] = 'application/json';
-    }
-
-    let res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-
-    if (res.status === 401) {
-        const refreshToken = localStorage.getItem('repcore_refresh_token');
-
-        if (refreshToken && path !== '/login' && path !== '/refresh') {
-            try {
-                const refreshRes = await fetch(`${API_BASE}/refresh`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ refresh_token: refreshToken })
-                });
-
-                if (refreshRes.ok) {
-                    const data = await refreshRes.json();
-
-                    this.token = data.access_token;
-                    localStorage.setItem('repcore_token', data.access_token);
-                    if (data.refresh_token) {
-                        localStorage.setItem('repcore_refresh_token', data.refresh_token);
+                async api(path, options = {}) {
+                    const headers = options.headers || {};
+                    if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+                    if (!(options.body instanceof URLSearchParams) && !headers['Content-Type']) {
+                        headers['Content-Type'] = 'application/json';
                     }
 
-                    headers['Authorization'] = `Bearer ${this.token}`;
-                    res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-                } else {
-                    throw new Error('The session has expired');
-                }
-            } catch (err) {
-                this.logout();
-                throw new Error('Your session has expired. Please log in again.');
-            }
-        } else {
-            this.logout();
-            throw new Error('Your session has expired. Please log in again.');
-        }
-    }
+                    let res = await fetch(`${API_BASE}${path}`, { ...options, headers });
 
-    if (res.status === 204) return null;
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Request error');
-    return data;
-},
+                    if (res.status === 401) {
+                        const refreshToken = localStorage.getItem('repcore_refresh_token');
 
-async login() {
-    try {
-        const formData = new URLSearchParams();
-        formData.append('username', this.authForm.email);
-        formData.append('password', this.authForm.password);
+                        if (refreshToken && path !== '/login' && path !== '/refresh') {
+                            try {
+                                const refreshRes = await fetch(`${API_BASE}/refresh`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ refresh_token: refreshToken })
+                                });
 
-        const data = await this.api('/login', { method: 'POST', body: formData });
+                                if (refreshRes.ok) {
+                                    const data = await refreshRes.json();
 
-        this.token = data.access_token;
-        localStorage.setItem('repcore_token', data.access_token);
-        localStorage.setItem('repcore_refresh_token', data.refresh_token);
+                                    this.token = data.access_token;
+                                    localStorage.setItem('repcore_token', data.access_token);
+                                    if (data.refresh_token) {
+                                        localStorage.setItem('repcore_refresh_token', data.refresh_token);
+                                    }
 
-        this.notify('Login successful!');
-        this.loadInitialData();
-    } catch (e) { this.notify(e.message, 'error'); }
-},
+                                    headers['Authorization'] = `Bearer ${this.token}`;
+                                    res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+                                } else {
+                                    throw new Error('The session has expired');
+                                }
+                            } catch (err) {
+                                this.logout();
+                                throw new Error('Your session has expired. Please log in again.');
+                            }
+                        } else {
+                            this.logout();
+                            throw new Error('Your session has expired. Please log in again.');
+                        }
+                    }
+
+                    if (res.status === 204) return null;
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Request error');
+                    return data;
+                },
+
+                async login() {
+                    try {
+                        const formData = new URLSearchParams();
+                        formData.append('username', this.authForm.email);
+                        formData.append('password', this.authForm.password);
+
+                        const data = await this.api('/login', { method: 'POST', body: formData });
+
+                        this.token = data.access_token;
+                        localStorage.setItem('repcore_token', data.access_token);
+                        localStorage.setItem('repcore_refresh_token', data.refresh_token);
+
+                        this.notify('Login successful!');
+                        this.loadInitialData();
+                    } catch (e) { this.notify(e.message, 'error'); }
+                },
 
                 async register() {
                     try {
@@ -446,12 +451,13 @@ async login() {
                         this.authMode = 'login';
                     } catch (e) { this.notify(e.message, 'error'); }
                 },
-logout() {
-    this.token = null;
-    localStorage.removeItem('repcore_token');
-    localStorage.removeItem('repcore_refresh_token');
-    this.activeWorkout = null;
-},
+
+                logout() {
+                    this.token = null;
+                    localStorage.removeItem('repcore_token');
+                    localStorage.removeItem('repcore_refresh_token');
+                    this.activeWorkout = null;
+                },
 
                 async loadInitialData() {
                     await Promise.all([this.fetchSummary(), this.fetchExercises(), this.fetchWorkouts()]);
@@ -504,6 +510,12 @@ logout() {
                     try {
                         this.activeWorkout = await this.api(`/workouts/${id}`);
                         this.newSet.set_number = (this.activeWorkout.sets?.length || 0) + 1;
+
+                        if (window.innerWidth < 768) {
+                            setTimeout(() => {
+                                document.getElementById('active-workout-section')?.scrollIntoView({ behavior: 'smooth' });
+                            }, 100);
+                        }
                     } catch (e) { this.notify(e.message, 'error'); }
                 },
 
@@ -571,7 +583,7 @@ logout() {
                                 labels: points.map(p => p.workout_date),
                                 datasets: [
                                     {
-                                        label: 'Max. additional weight (kg)',
+                                        label: 'Max weight (kg)',
                                         data: points.map(p => p.max_weight),
                                         borderColor: '#10b981',
                                         backgroundColor: 'rgba(16, 185, 129, 0.15)',
@@ -579,7 +591,7 @@ logout() {
                                         fill: true
                                     },
                                     {
-                                        label: 'Total number of repetitions per workout',
+                                        label: 'Total reps',
                                         data: points.map(p => p.total_reps),
                                         borderColor: '#3b82f6',
                                         tension: 0.3
@@ -588,7 +600,8 @@ logout() {
                             },
                             options: {
                                 responsive: true,
-                                plugins: { legend: { labels: { color: '#e4e4e7' } } },
+                                maintainAspectRatio: false,
+                                plugins: { legend: { labels: { color: '#e4e4e7', boxWidth: 12 } } },
                                 scales: {
                                     x: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } },
                                     y: { ticks: { color: '#a1a1aa' }, grid: { color: '#27272a' } }
