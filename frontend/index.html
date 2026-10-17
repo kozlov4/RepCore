@@ -30,9 +30,9 @@
             </div>
 
             <div class="grid grid-cols-3 gap-1 bg-zinc-950 p-1 rounded-xl mb-6 border border-zinc-800 text-xs font-semibold">
-                <button @click="authMode = 'login'" :class="authMode === 'login' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Вход</button>
-                <button @click="authMode = 'register'" :class="authMode === 'register' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Регистрация</button>
-                <button @click="authMode = 'verify'" :class="authMode === 'verify' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Код с почты</button>
+                <button @click="authMode = 'login'" :class="authMode === 'login' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Login</button>
+                <button @click="authMode = 'register'" :class="authMode === 'register' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Registration</button>
+                <button @click="authMode = 'verify'" :class="authMode === 'verify' ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-400'" class="py-2 rounded-lg transition">Code from the email</button>
             </div>
 
             <form x-show="authMode === 'login'" @submit.prevent="login()" class="space-y-4">
@@ -44,7 +44,7 @@
                     <label class="block text-xs text-zinc-400 mb-1">Password</label>
                     <input type="password" x-model="authForm.password" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Войти в систему</button>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Log In</button>
             </form>
 
             <form x-show="authMode === 'register'" @submit.prevent="register()" class="space-y-4">
@@ -56,7 +56,7 @@
                     <label class="block text-xs text-zinc-400 mb-1">Password (at least 8 characters)</label>
                     <input type="password" x-model="authForm.password" minlength="8" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500">
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Создать аккаунт</button>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Create an Account</button>
             </form>
 
             <form x-show="authMode === 'verify'" @submit.prevent="verifyEmail()" class="space-y-4">
@@ -68,7 +68,7 @@
                     <label class="block text-xs text-zinc-400 mb-1">6-digit confirmation code</label>
                     <input type="text" x-model="authForm.code" maxlength="6" placeholder="123456" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 tracking-widest text-center text-lg font-bold focus:outline-none focus:border-emerald-500">
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Подтвердить почту</button>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-xl transition">Verify your email address</button>
             </form>
         </div>
     </div>
@@ -86,7 +86,7 @@
                 <button @click="switchTab('analytics')" :class="tab === 'analytics' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'" class="px-4 py-2 rounded-xl text-sm transition">Аналитика & PR</button>
             </nav>
 
-            <button @click="logout()" class="text-xs text-zinc-400 hover:text-red-400 px-3 py-2 rounded-lg border border-zinc-800 transition">Выйти</button>
+            <button @click="logout()" class="text-xs text-zinc-400 hover:text-red-400 px-3 py-2 rounded-lg border border-zinc-800 transition">Log Out</button>
         </header>
 
         <div class="grid grid-cols-3 gap-4 mb-6">
@@ -109,10 +109,10 @@
                 <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
                     <h2 class="font-bold text-lg mb-4">New Workout</h2>
                     <form @submit.prevent="createWorkout()" class="space-y-3">
-                        <input type="text" x-model="newWorkout.title" placeholder="Напр: Верх тела (Тяги + Жим)" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none">
+                        <input type="text" x-model="newWorkout.title" placeholder="For example: Upper Body (Pull-ups + Bench Press)" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none">
                         <input type="date" x-model="newWorkout.workout_date" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none">
-                        <textarea x-model="newWorkout.notes" placeholder="Заметки о самочувствии..." rows="2" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none"></textarea>
-                        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-sm transition">+ Начать тренировку</button>
+                        <textarea x-model="newWorkout.notes" placeholder="Notes on How I'm Feeling..." rows="2" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm focus:border-emerald-500 focus:outline-none"></textarea>
+                        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-sm transition">+ Start your workout</button>
                     </form>
                 </div>
 
@@ -145,12 +145,12 @@
                         </div>
 
                         <form @submit.prevent="addSet()" class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl space-y-4">
-                            <div class="text-sm font-bold text-emerald-400">Добавить подход</div>
+                            <div class="text-sm font-bold text-emerald-400">Add a set</div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="text-xs text-zinc-400">Упражнение</label>
+                                    <label class="text-xs text-zinc-400">Exercise</label>
                                     <select x-model="newSet.exercise_id" @change="fetchLastPerformance(newSet.exercise_id)" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm mt-1">
-                                        <option value="">-- Выбери упражнение --</option>
+                                        <option value="">-- Choose an exercise --</option>
                                         <template x-for="ex in exercises" :key="ex.id">
                                             <option :value="ex.id" x-text="`${ex.name} (${ex.muscle_group})`"></option>
                                         </template>
@@ -158,26 +158,26 @@
                                 </div>
                                 <div class="grid grid-cols-3 gap-2">
                                     <div>
-                                        <label class="text-xs text-zinc-400">Сет №</label>
+                                        <label class="text-xs text-zinc-400">Set №</label>
                                         <input type="number" x-model.number="newSet.set_number" min="1" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-sm mt-1">
                                     </div>
                                     <div>
-                                        <label class="text-xs text-zinc-400">Повт.</label>
+                                        <label class="text-xs text-zinc-400">Repeat</label>
                                         <input type="number" x-model.number="newSet.reps" min="1" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-sm mt-1">
                                     </div>
                                     <div>
-                                        <label class="text-xs text-zinc-400">+Вес (кг)</label>
+                                        <label class="text-xs text-zinc-400">+Weight (kg)</label>
                                         <input type="number" step="0.5" x-model.number="newSet.extra_weight" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-sm mt-1">
                                     </div>
                                 </div>
                             </div>
 
                             <div x-show="lastPerformance.length > 0" class="bg-zinc-900/90 border border-emerald-500/30 p-3 rounded-lg text-xs">
-                                <span class="text-emerald-400 font-bold">В прошлый раз было:</span>
+                                <span class="text-emerald-400 font-bold">Last time, it was:</span>
                                 <div class="flex flex-wrap gap-2 mt-1.5">
                                     <template x-for="lp in lastPerformance" :key="lp.id">
                                         <span class="bg-zinc-950 px-2.5 py-1 rounded border border-zinc-800">
-                                            Сет <b x-text="lp.set_number"></b>: <b x-text="lp.reps"></b> повт. × <b x-text="lp.extra_weight"></b> кг
+                                            Сет <b x-text="lp.set_number"></b>: <b x-text="lp.reps"></b> Repeat × <b x-text="lp.extra_weight"></b> kg
                                         </span>
                                     </template>
                                 </div>
@@ -186,14 +186,14 @@
                             <div class="flex items-center justify-between pt-1">
                                 <label class="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
                                     <input type="checkbox" x-model="newSet.is_warmup" class="rounded bg-zinc-900 border-zinc-700 text-emerald-500 focus:ring-0">
-                                    Разминочный подход (не идет в рекорды)
+                                    Warm-up set (does not count toward records)
                                 </label>
                                 <button type="submit" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-5 py-2 rounded-lg text-sm transition">Записать подход</button>
                             </div>
                         </form>
 
                         <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-zinc-300">Выполненные подходы</h3>
+                            <h3 class="text-sm font-bold text-zinc-300">Approaches Taken</h3>
                             <template x-for="s in activeWorkout.sets" :key="s.id">
                                 <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800 px-4 py-3 rounded-xl text-sm">
                                     <div class="flex items-center gap-3">
@@ -205,7 +205,7 @@
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <div class="font-mono text-emerald-400 font-bold">
-                                            <span x-text="s.reps"></span> повт.
+                                            <span x-text="s.reps"></span> Repeat
                                             <span x-show="s.extra_weight > 0" x-text="`(+${s.extra_weight} кг)`"></span>
                                         </div>
                                         <button @click="deleteSet(s.id)" class="text-zinc-500 hover:text-red-400 text-xs">✕</button>
@@ -213,40 +213,40 @@
                                 </div>
                             </template>
                             <div x-show="!activeWorkout.sets || activeWorkout.sets.length === 0" class="text-xs text-zinc-500 text-center py-6">
-                                В этой тренировке еще нет записанных подходов.
+                                There are no sets recorded for this workout yet.
                             </div>
                         </div>
                     </div>
                 </template>
 
                 <div x-show="!activeWorkout" class="bg-zinc-900 border border-zinc-800 p-12 rounded-2xl text-center text-zinc-500 text-sm">
-                    Выбери тренировку слева или создай новую, чтобы начать записывать подходы.
+                    Select a workout from the left or create a new one to start logging your sets.
                 </div>
             </div>
         </div>
 
         <div x-show="tab === 'exercises'" class="grid md:grid-cols-12 gap-6">
             <div class="md:col-span-4 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl h-fit">
-                <h2 class="font-bold text-lg mb-4">Добавить упражнение</h2>
+                <h2 class="font-bold text-lg mb-4">Add an exercise</h2>
                 <form @submit.prevent="createExercise()" class="space-y-3">
                     <div>
-                        <label class="text-xs text-zinc-400">Название</label>
-                        <input type="text" x-model="newExercise.name" placeholder="Напр: Выходы силой" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm mt-1">
+                        <label class="text-xs text-zinc-400">Title</label>
+                        <input type="text" x-model="newExercise.name" placeholder="For example: Forced exits" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm mt-1">
                     </div>
                     <div>
-                        <label class="text-xs text-zinc-400">Мышечная группа</label>
+                        <label class="text-xs text-zinc-400">Muscle group</label>
                         <select x-model="newExercise.muscle_group" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm mt-1">
-                            <option value="back">Спина (back)</option>
-                            <option value="chest">Грудь (chest)</option>
-                            <option value="shoulders">Плечи (shoulders)</option>
-                            <option value="arms">Руки (arms)</option>
-                            <option value="legs">Ноги (legs)</option>
-                            <option value="core">Пресс / Кор (core)</option>
+                            <option value="back">Back</option>
+                            <option value="chest">Chest</option>
+                            <option value="shoulders">Shoulders</option>
+                            <option value="arms">Arms</option>
+                            <option value="legs">Legs</option>
+                            <option value="core">Core</option>
                         </select>
                     </div>
                     <label class="flex items-center gap-2 text-xs text-zinc-300 pt-1 cursor-pointer">
                         <input type="checkbox" x-model="newExercise.is_bodyweight" class="rounded bg-zinc-950 border-zinc-700 text-emerald-500">
-                        Упражнение со своим весом (Калистеника)
+                        Bodyweight Exercises (Calisthenics)
                     </label>
                     <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-sm transition mt-2">Сохранить в каталог</button>
                 </form>
@@ -254,9 +254,9 @@
 
             <div class="md:col-span-8 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-4">
                 <div class="flex flex-wrap gap-2 justify-between items-center">
-                    <input type="text" x-model="exerciseFilter.search" @input.debounce.300ms="fetchExercises()" placeholder="Поиск по названию..." class="bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm">
+                    <input type="text" x-model="exerciseFilter.search" @input.debounce.300ms="fetchExercises()" placeholder="Search by title..." class="bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm">
                     <select x-model="exerciseFilter.muscle_group" @change="fetchExercises()" class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm">
-                        <option value="">Все группы мышц</option>
+                        <option value="">All muscle groups</option>
                         <option value="back">Back</option>
                         <option value="chest">Chest</option>
                         <option value="shoulders">Shoulders</option>
@@ -273,10 +273,10 @@
                                 <div class="font-bold text-sm" x-text="ex.name"></div>
                                 <div class="flex gap-2 mt-1">
                                     <span class="text-[11px] bg-zinc-800 text-emerald-400 px-2 py-0.5 rounded uppercase" x-text="ex.muscle_group"></span>
-                                    <span x-show="ex.is_bodyweight" class="text-[11px] bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">Свой вес</span>
+                                    <span x-show="ex.is_bodyweight" class="text-[11px] bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">Its weight</span>
                                 </div>
                             </div>
-                            <button @click="deleteExercise(ex.id)" class="text-zinc-500 hover:text-red-400 text-xs">Удалить</button>
+                            <button @click="deleteExercise(ex.id)" class="text-zinc-500 hover:text-red-400 text-xs">Delete</button>
                         </div>
                     </template>
                 </div>
@@ -285,7 +285,7 @@
 
         <div x-show="tab === 'analytics'" class="grid md:grid-cols-12 gap-6">
             <div class="md:col-span-5 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-3">
-                <h2 class="font-bold text-lg">Личные рекорды (PR)</h2>
+                <h2 class="font-bold text-lg">Personal Records (PR)</h2>
                 <div class="space-y-2.5">
                     <template x-for="r in records" :key="r.exercise_id">
                         <div class="bg-zinc-950 border border-zinc-800 p-3.5 rounded-xl flex justify-between items-center">
@@ -299,15 +299,15 @@
                             </div>
                         </div>
                     </template>
-                    <div x-show="records.length === 0" class="text-xs text-zinc-500 text-center py-6">Запиши хотя бы один рабочий подход, чтобы увидеть рекорды.</div>
+                    <div x-show="records.length === 0" class="text-xs text-zinc-500 text-center py-6">Record at least one valid attempt to see your records.</div>
                 </div>
             </div>
 
             <div class="md:col-span-7 bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-4">
                 <div class="flex justify-between items-center">
-                    <h2 class="font-bold text-lg">График прогресса</h2>
+                    <h2 class="font-bold text-lg">Progress Chart</h2>
                     <select x-model="chartExerciseId" @change="loadChart()" class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-sm">
-                        <option value="">-- Выбери упражнение --</option>
+                        <option value="">-- Choose an exercise --</option>
                         <template x-for="ex in exercises" :key="ex.id">
                             <option :value="ex.id" x-text="ex.name"></option>
                         </template>
@@ -390,21 +390,21 @@ async api(path, options = {}) {
                     headers['Authorization'] = `Bearer ${this.token}`;
                     res = await fetch(`${API_BASE}${path}`, { ...options, headers });
                 } else {
-                    throw new Error('Сессия истекла');
+                    throw new Error('The session has expired');
                 }
             } catch (err) {
                 this.logout();
-                throw new Error('Сессия истекла, войдите снова');
+                throw new Error('Your session has expired. Please log in again.');
             }
         } else {
             this.logout();
-            throw new Error('Сессия истекла, войдите снова');
+            throw new Error('Your session has expired. Please log in again.');
         }
     }
 
     if (res.status === 204) return null;
     const data = await res.json();
-    if (!res.ok) throw new Error(data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Ошибка запроса');
+    if (!res.ok) throw new Error(data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Request error');
     return data;
 },
 
@@ -420,7 +420,7 @@ async login() {
         localStorage.setItem('repcore_token', data.access_token);
         localStorage.setItem('repcore_refresh_token', data.refresh_token);
 
-        this.notify('Успешный вход!');
+        this.notify('Login successful!');
         this.loadInitialData();
     } catch (e) { this.notify(e.message, 'error'); }
 },
@@ -431,7 +431,7 @@ async login() {
                             method: 'POST',
                             body: JSON.stringify({ email: this.authForm.email, password: this.authForm.password })
                         });
-                        this.notify('Аккаунт создан! Введи 6-значный код из письма.');
+                        this.notify('Your account has been created! Enter the 6-digit code from the email.');
                         this.authMode = 'verify';
                     } catch (e) { this.notify(e.message, 'error'); }
                 },
@@ -442,7 +442,7 @@ async login() {
                             method: 'POST',
                             body: JSON.stringify({ email: this.authForm.email, code: this.authForm.code })
                         });
-                        this.notify('Почта подтверждена! Теперь можно войти.');
+                        this.notify('Your email has been confirmed! You can now log in.');
                         this.authMode = 'login';
                     } catch (e) { this.notify(e.message, 'error'); }
                 },
@@ -479,7 +479,7 @@ logout() {
                     try {
                         await this.api('/exercises', { method: 'POST', body: JSON.stringify(this.newExercise) });
                         this.newExercise.name = '';
-                        this.notify('Упражнение добавлено');
+                        this.notify('Exercise added');
                         await this.fetchExercises();
                     } catch (e) { this.notify(e.message, 'error'); }
                 },
@@ -512,7 +512,7 @@ logout() {
                         const created = await this.api('/workouts', { method: 'POST', body: JSON.stringify(this.newWorkout) });
                         this.newWorkout.title = '';
                         this.newWorkout.notes = '';
-                        this.notify('Тренировка создана!');
+                        this.notify('The workout has been created!');
                         await this.fetchWorkouts();
                         await this.selectWorkout(created.id);
                         await this.fetchSummary();
@@ -542,7 +542,7 @@ logout() {
                             body: JSON.stringify(this.newSet)
                         });
                         this.newSet.set_number = (this.activeWorkout.sets?.length || 0) + 1;
-                        this.notify('Подход записан!');
+                        this.notify('The approach has been recorded!');
                         await this.fetchSummary();
                     } catch (e) { this.notify(e.message, 'error'); }
                 },
@@ -571,7 +571,7 @@ logout() {
                                 labels: points.map(p => p.workout_date),
                                 datasets: [
                                     {
-                                        label: 'Макс. доп. вес (кг)',
+                                        label: 'Max. additional weight (kg)',
                                         data: points.map(p => p.max_weight),
                                         borderColor: '#10b981',
                                         backgroundColor: 'rgba(16, 185, 129, 0.15)',
@@ -579,7 +579,7 @@ logout() {
                                         fill: true
                                     },
                                     {
-                                        label: 'Сумма повторений за тренировку',
+                                        label: 'Total number of repetitions per workout',
                                         data: points.map(p => p.total_reps),
                                         borderColor: '#3b82f6',
                                         tension: 0.3
