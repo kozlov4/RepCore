@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 import jwt
-from core.config import settings
+from src.core.config import settings
 from fastapi import BackgroundTasks, HTTPException, status
 from fastapi_mail import FastMail, MessageSchema, MessageType
 from sqlalchemy import delete, select
@@ -46,7 +46,7 @@ async def forgot_password(
     fm: FastMail,
 ):
     generic_response = {
-        "message": "Якщо користувач з таким email існує, на нього відправлено інструкцію з відновлення."
+        "message": "If a user with that email address exists, recovery instructions have been sent to them."
     }
 
     query = select(User).where(User.email == request.email)
@@ -71,14 +71,14 @@ async def forgot_password(
     await session.commit()
 
     html_content = f"""
-    <h2>Відновлення пароля</h2>
-    <p>Для відновлення пароля перейдіть за посиланням нижче:</p>
-    <p><a href="{settings.frontend_url}/reset-password?token={reset_token}">Відновити пароль</a></p>
-    <p>Посилання дійсне протягом 15 хвилин.</p>
+    <h2>Password Recovery</h2>
+    <p>To reset your password, click the link below:</p>
+    <p><a href="{settings.frontend_url}/reset-password?token={reset_token}">Reset Password</a></p>
+    <p>The link is valid for 15 minutes.</p>
     """
 
     message = MessageSchema(
-        subject="Відновлення пароля",
+        subject="Password Recovery",
         recipients=[user.email],
         body=html_content,
         subtype=MessageType.html,
@@ -103,7 +103,7 @@ async def reset_password(request: ResetPasswordRequest, session: AsyncSession):
     if not verification:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Недійсний або прострочений токен відновлення.",
+            detail="The recovery token is invalid or has expired.",
         )
 
     if verification.expires_at < datetime.now(UTC).replace(tzinfo=None):
@@ -111,7 +111,7 @@ async def reset_password(request: ResetPasswordRequest, session: AsyncSession):
         await session.commit()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Термін дії токена минув. Зробіть запит на відновлення ще раз.",
+            detail="The token has expired. Please submit a renewal request again.",
         )
 
     user_query = select(User).where(User.user_id == verification.user_id)
@@ -120,7 +120,7 @@ async def reset_password(request: ResetPasswordRequest, session: AsyncSession):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Користувача не знайдено.",
+            detail="User not found.",
         )
 
     hashed_pwd = hash_password(request.new_password)
@@ -131,7 +131,7 @@ async def reset_password(request: ResetPasswordRequest, session: AsyncSession):
     await session.delete(verification)
     await session.commit()
 
-    return {"message": "Пароль успішно змінено"}
+    return {"message": "Your password has been successfully changed"}
 
 
 async def register_user(
@@ -146,7 +146,7 @@ async def register_user(
     if result.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Користувач з таким email вже існує",
+            detail="A user with this email address already exists",
         )
 
     hashed_pwd = hash_password(user_in.password)
@@ -168,7 +168,7 @@ async def register_user(
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Помилка при реєстрації. Можливо, email або телефон вже використовуються.",
+            detail="An error occurred during registration. The email address or phone number may already be in use.",
         )
 
     await session.refresh(new_user)
@@ -184,14 +184,14 @@ async def register_user(
     await session.commit()
 
     html_content = f"""
-    <h2>Підтвердження реєстрації</h2>
-    <p>Ваш код для підтвердження email:</p>
+    <h2>Registration Confirmation</h2>
+    <p>Your email verification code:</p>
     <h1 style="letter-spacing: 5px;">{verification_code}</h1>
-    <p>Код дійсний 15 хвилин.</p>
+    <p>The code is valid for 15 minutes.</p>
     """
 
     message = MessageSchema(
-        subject="Підтвердження реєстрації",
+        subject="Registration Confirmation",
         recipients=[user_in.email],
         body=html_content,
         subtype=MessageType.html,
@@ -210,10 +210,10 @@ async def verify_email_code(session: AsyncSession, verify_data: VerifyEmailReque
     user = await session.scalar(user_query)
 
     if not user:
-        raise HTTPException(status_code=404, detail="Користувача не знайдено")
+        raise HTTPException(status_code=404, detail="User not found")
 
     if user.is_active:
-        return {"message": "Email вже підтверджено"}
+        return {"message": "Email has already been confirmed"}
 
     verify_query = select(EmailVerification).where(
         EmailVerification.user_id == user.user_id,
@@ -222,18 +222,18 @@ async def verify_email_code(session: AsyncSession, verify_data: VerifyEmailReque
     verification = await session.scalar(verify_query)
 
     if not verification:
-        raise HTTPException(status_code=400, detail="Невірний код підтвердження")
+        raise HTTPException(status_code=400, detail="Invalid verification code")
 
     if verification.expires_at < datetime.now(UTC).replace(tzinfo=None):
         await session.delete(verification)
         await session.commit()
-        raise HTTPException(status_code=400, detail="Час дії коду вичерпано")
+        raise HTTPException(status_code=400, detail="The code has expired")
 
     user.is_active = True
     await session.delete(verification)
     await session.commit()
 
-    return {"message": "Email успішно підтверджено. Тепер ви можете увійти."}
+    return {"message": "Your email has been successfully verified. You can now log in."}
 
 
 async def user_login(
@@ -247,18 +247,20 @@ async def user_login(
     if not user:
         validate_password(user_in.password, DUMMY_HASH)
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Невірний email або пароль"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
         )
 
     if not validate_password(user_in.password, user.hash_password.encode("utf-8")):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Невірний email або пароль"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
         )
 
     if getattr(user, "is_active", None) is False:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Будь ласка, підтвердіть ваш email. Код відправлено на пошту.",
+            detail="Please confirm your email address. A code has been sent to your email.",
         )
 
     access_token = encode_jwt(
@@ -295,11 +297,11 @@ async def refresh_access_token(session: AsyncSession, refresh_token: str) -> Tok
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Сесія закінчилася.",
+            detail="The session has ended.",
         )
     except jwt.InvalidTokenError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Недійсний токен"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
         )
 
     stmt = select(User).where(User.id == int(user_id)).limit(1)

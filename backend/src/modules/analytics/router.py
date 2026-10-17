@@ -21,10 +21,6 @@ async def get_records(
     session: SessionDep,
     user_id: int = Depends(get_current_user),
 ):
-    """
-    Возвращает персональные рекорды (макс. вес, макс. повторения) по каждому упражнению.
-    Разминочные подходы игнорируются.
-    """
     return await service.get_user_records(session=session, user_id=user_id)
 
 
@@ -38,10 +34,6 @@ async def get_exercise_chart(
     session: SessionDep,
     user_id: int = Depends(get_current_user),
 ):
-    """
-    Возвращает исторические данные по конкретному упражнению для построения графика на фронтенде.
-    Ось X — workout_date.
-    """
     return await service.get_exercise_chart_data(
         session=session, user_id=user_id, exercise_id=exercise_id
     )
@@ -55,12 +47,9 @@ async def get_summary(
     user_id: int = Depends(get_current_user),
     period: schemas.SummaryPeriod = Query(
         default=schemas.SummaryPeriod.week,
-        description="Период для сводки: week, month, year, all_time",
+        description="Aggregation period: week, month, year, all_time",
     ),
 ):
-    """
-    Отдает сводную статистику (кол-во тренировок, подходов, повторений) за период.
-    """
     return await service.get_activity_summary(
         session=session, user_id=user_id, period=period
     )

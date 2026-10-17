@@ -8,10 +8,6 @@ from .schemas import SummaryPeriod
 
 
 async def get_user_records(session: AsyncSession, user_id: int):
-    """
-    Агрегация рекордов по упражнениям (только рабочие подходы).
-    Возвращает макс. вес, макс. повторения и кол-во подходов.
-    """
     query = (
         select(
             Exercise.id.label("exercise_id"),
@@ -38,9 +34,6 @@ async def get_user_records(session: AsyncSession, user_id: int):
 async def get_exercise_chart_data(
     session: AsyncSession, user_id: int, exercise_id: int
 ):
-    """
-    Выборка точек для графика: группировка по дате тренировки.
-    """
     query = (
         select(
             Workout.workout_date,
@@ -66,9 +59,6 @@ async def get_exercise_chart_data(
 async def get_activity_summary(
     session: AsyncSession, user_id: int, period: SummaryPeriod
 ):
-    """
-    Быстрая сводка активности за выбранный период.
-    """
     today = date.today()
     start_date = None
 

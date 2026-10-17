@@ -51,12 +51,12 @@ async def get_workouts_list(
     user_id: int = Depends(get_current_user),
     date_from: date | None = Query(
         default=None,
-        description="Фильтр: начальная дата диапазона (включительно), формат YYYY-MM-DD",
+        description="Filter: Start date of the range (inclusive), format YYYY-MM-DD",
         examples=["2026-10-01"],
     ),
     date_to: date | None = Query(
         default=None,
-        description="Фильтр: конечная дата диапазона (включительно), формат YYYY-MM-DD",
+        description="Filter: End date of the range (inclusive), YYYY-MM-DD format",
         examples=["2026-10-16"],
     ),
 ):

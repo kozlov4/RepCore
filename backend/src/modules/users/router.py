@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from core.config import settings
+from src.core.config import settings
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_mail import ConnectionConfig, FastMail

@@ -16,7 +16,7 @@ class ResetPasswordRequest(BaseModel):
     @model_validator(mode="after")
     def check_passwords_match(self) -> Self:
         if self.new_password != self.repeat_new_password:
-            raise ValueError("Паролі не співпадають")
+            raise ValueError("The passwords do not match")
         return self
 
 
@@ -58,11 +58,11 @@ class UserRegistration(BaseModel):
     @classmethod
     def validate_password_complexity(cls, v: str) -> str:
         if not re.search(r"[A-Z]", v):
-            raise ValueError("Пароль має містити хоча б одну велику літеру")
+            raise ValueError("The password must contain at least one uppercase letter")
         if not re.search(r"[a-z]", v):
-            raise ValueError("Пароль має містити хоча б одну маленьку літеру")
+            raise ValueError("The password must contain at least one lowercase letter")
         if not re.search(r"[0-9]", v):
-            raise ValueError("Пароль має містити хоча б одну цифру")
+            raise ValueError("The password must contain at least one number")
         return v
 
 
@@ -72,7 +72,7 @@ class VerifyEmailRequest(BaseModel):
         min_length=6,
         max_length=6,
         pattern=r"^\d{6}$",
-        description="6-значний цифровий код підтвердження",
+        description="6-digit digital verification code",
     )
 
 

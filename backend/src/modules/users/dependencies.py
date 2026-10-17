@@ -18,14 +18,14 @@ async def get_current_user(
         if payload.get("type") != "access":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Невірний тип токена. Для доступу потрібен Access Token.",
+                detail="Invalid token type. An access token is required for access.",
             )
 
         user_id_str = payload.get("sub")
         if not user_id_str:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="У токені відсутній ID користувача",
+                detail="The token does not contain a user ID",
             )
 
         return int(user_id_str)
@@ -33,11 +33,11 @@ async def get_current_user(
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Термін дії токена закінчився. Будь ласка, оновіть токен.",
+            detail="The token has expired. Please refresh the token.",
         )
     except jwt.InvalidTokenError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Недійсний токен."
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token."
         )
 
 

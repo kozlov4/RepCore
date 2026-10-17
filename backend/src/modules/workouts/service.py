@@ -47,7 +47,7 @@ async def get_workout(session: AsyncSession, user_id: int, workout_id: int):
 
     if not workout:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Тренировка не найдена"
+            status_code=status.HTTP_404_NOT_FOUND, detail="No workout found"
         )
 
     return workout
@@ -74,7 +74,7 @@ async def get_workouts_list(
 
     if not workouts:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Тренировки не найдены"
+            status_code=status.HTTP_404_NOT_FOUND, detail="No workouts found"
         )
 
     return workouts
@@ -90,7 +90,7 @@ async def update_workout(
     if not workout:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Тренировка не найдена или у вас нет прав на его изменение",
+            detail="The workout was not found, or you do not have permission to edit it",
         )
 
     update_data = workout_in.model_dump(exclude_unset=True)
@@ -116,7 +116,7 @@ async def delete_workout(session: AsyncSession, workout_id: int, user_id: int):
     if not workout:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Тренироовка не найдена или у вас нет прав на его удаление",
+            detail="The training session was not found, or you do not have permission to delete it",
         )
 
     await session.delete(workout)
@@ -164,7 +164,7 @@ async def update_workout_set(
     if not db_set:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Подход не найден или у вас нет прав на его изменение",
+            detail="The path was not found, or you do not have permission to modify it",
         )
 
     update_data = set_in.model_dump(exclude_unset=True)
@@ -199,7 +199,7 @@ async def delete_workout_set(session: AsyncSession, set_id: int, user_id: int):
     if not db_set:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Сет не найдена или у вас нет прав на его удаление",
+            detail="The set was not found, or you do not have permission to delete it",
         )
 
     await session.delete(db_set)
